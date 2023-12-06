@@ -12,6 +12,10 @@
     print "Hello World Using Print </br>";
     $var_idnum = 214409515;
     print $var_idnum;
+    echo "hatdog";
+    echo "try lang heheh";
+    echo "123";
+
 
     ?>
 

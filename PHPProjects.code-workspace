@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"name": "PHPProjects",
+			"path": "."
+		},
+		{
+			"name": "PHPractice",
+			"path": "../PHPractice"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "PHPProjects"
+	}
+}
