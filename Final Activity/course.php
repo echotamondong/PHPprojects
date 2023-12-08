@@ -22,9 +22,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Update Course
     if (isset($_POST["update_course"])) {
         $newName = $_POST["new_name"];
+        $newDescription = $_POST["new_description"];
         $idToUpdate = $_POST["course_id"];
 
-        $sql = "UPDATE Course SET name='$newName' WHERE id=$idToUpdate";
+        $sql = "UPDATE Course SET name='$newName', description='$newDescription' WHERE id=$idToUpdate";
         performQuery($sql);
     }
 
@@ -177,10 +178,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <h2>Update Course</h2>
         <label for="new_name">New Course Name:</label>
         <input type="text" name="new_name" required>
+        <label for="new_description">New Course Description:</label>
+        <textarea name="new_description" required></textarea>
         <label for="course_id">Course ID to Update:</label>
         <input type="text" name="course_id" required>
         <button type="submit" name="update_course">Update Course</button>
     </form>
+
 
     <!-- HTML form for deleting a course -->
     <form method="post">

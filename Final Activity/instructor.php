@@ -20,10 +20,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     // Update Instructor
     if (isset($_POST["update_instructor"])) {
-        $newName = $_POST["new_name"];
         $idToUpdate = $_POST["instructor_id"];
+        $newName = $_POST["new_name"];
+        $newEmail = $_POST["new_email"];
+        $newSpecialty = $_POST["new_specialty"];
 
-        $sql = "UPDATE Instructor SET name='$newName' WHERE id=$idToUpdate";
+        $sql = "UPDATE Instructor SET name='$newName', email='$newEmail', specialty='$newSpecialty' WHERE id=$idToUpdate";
         performQuery($sql);
     }
 
@@ -32,9 +34,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $idToDelete = $_POST["instructor_id_delete"];
         $sql = "DELETE FROM Instructor WHERE id=$idToDelete";
         performQuery($sql);
+
+        // Reset auto-increment value
+        $resetAutoIncrementSql = "ALTER TABLE Instructor AUTO_INCREMENT = 1";
+        performQuery($resetAutoIncrementSql);
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -77,7 +84,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         button {
-            background-color: #4caf50;
+            background-color: #1a6ebd;
             color: #fff;
             padding: 10px;
             border: none;
@@ -125,20 +132,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     <!-- HTML form for creating an instructor -->
     <form method="post">
-        <h2>Create Instructor</h2>
+        <h2>Add Instructor</h2>
         <label for="name">Name:</label>
         <input type="text" name="name" required>
         <label for="email">Email:</label>
         <input type="email" name="email" required>
         <label for="specialty">Specialty:</label>
         <input type="text" name="specialty" required>
-        <button type="submit" name="create_instructor">Create Instructor</button>
+        <button type="submit" name="create_instructor">Add Instructor</button>
     </form>
 
     <!-- HTML form for reading instructors -->
     <form method="post">
-        <h2>Read Instructors</h2>
-        <button type="submit" name="read_instructors">Read Instructors</button>
+        <h2>View Instructors</h2>
+        <button type="submit" name="read_instructors">View Instructors</button>
     </form>
 
     <!-- Display code for instructors -->
@@ -172,13 +179,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <!-- HTML form for updating an instructor -->
     <form method="post">
         <h2>Update Instructor</h2>
-        <label for="new_name">New Name:</label>
-        <input type="text" name="new_name" required>
         <label for="instructor_id">Instructor ID to Update:</label>
         <input type="text" name="instructor_id" required>
+        <label for="new_name">New Name:</label>
+        <input type="text" name="new_name" required>
+        <label for="new_email">New Email:</label>
+        <input type="email" name="new_email" required>
+        <label for="new_specialty">New Specialty:</label>
+        <input type="text" name="new_specialty" required>
         <button type="submit" name="update_instructor">Update Instructor</button>
     </form>
 
+
+
+    
     <!-- HTML form for deleting an instructor -->
     <form method="post">
         <h2>Delete Instructor</h2>
@@ -186,6 +200,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <input type="text" name="instructor_id_delete" required>
         <button type="submit" name="delete_instructor">Delete Instructor</button>
     </form>
+
 
 </body>
 </html>

@@ -17,21 +17,24 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $users = fetchData($sql);
     }
 
-    // Update User
-    if (isset($_POST["update_user"])) {
-        $newUsername = $_POST["new_username"];
-        $idToUpdate = $_POST["user_id"];
+// Update User
+if (isset($_POST["update_user"])) {
+    $newUsername = $_POST["new_username"];
+    $currentUsername = $_POST["current_username"];
+    $newPassword = password_hash($_POST["new_password"], PASSWORD_DEFAULT);
 
-        $sql = "UPDATE Users SET username='$newUsername' WHERE id=$idToUpdate";
-        performQuery($sql);
-    }
+    $sql = "UPDATE Users SET username='$newUsername', password='$newPassword' WHERE username='$currentUsername'";
+    performQuery($sql);
+}
+
 
     // Delete User
-    if (isset($_POST["delete_user"])) {
-        $idToDelete = $_POST["user_id"];
-        $sql = "DELETE FROM Users WHERE id=$idToDelete";
-        performQuery($sql);
-    }
+if (isset($_POST["delete_user"])) {
+    $usernameToDelete = $_POST["username_delete"];
+    $sql = "DELETE FROM Users WHERE username='$usernameToDelete'";
+    performQuery($sql);
+}
+
 }
 ?>
 
@@ -76,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         button {
-            background-color: #4caf50;
+            background-color: #1a6ebd;
             color: #fff;
             padding: 10px;
             border: none;
@@ -115,7 +118,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         th {
-            background-color: #4caf50;
+            background-color: #1a6ebd;
             color: #fff;
         }
     </style>
@@ -163,7 +166,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         button {
-            background-color: #4caf50;
+            background-color: #1a6ebd;
             color: #fff;
             padding: 10px;
             border: none;
@@ -202,7 +205,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         th {
-            background-color: #4caf50;
+            background-color: #1a6ebd;
             color: #fff;
         }
     </style>
@@ -261,6 +264,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <button type="submit" name="update_user">Update User</button>
     </form>
 
+
     <!-- HTML form for deleting a user -->
     <form method="post">
         <h2>Delete User</h2>
@@ -268,6 +272,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <input type="text" name="username_delete" required>
         <button type="submit" name="delete_user">Delete User</button>
     </form>
+
 
 </body>
 </html>

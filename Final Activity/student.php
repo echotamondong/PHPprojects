@@ -2,8 +2,8 @@
 include_once 'db.php';
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // Create Student
-    if (isset($_POST["create_student"])) {
+    // Add Student
+    if (isset($_POST["add_student"])) {
         $name = $_POST["name"];
         $email = $_POST["email"];
         $address = $_POST["address"];
@@ -12,8 +12,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         performQuery($sql);
     }
 
-    // Read Students
-    if (isset($_POST["read_students"])) {
+    // View Students
+    if (isset($_POST["view_students"])) {
         $sql = "SELECT id, name, email, address FROM Student";
         $students = fetchData($sql);
     }
@@ -24,28 +24,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $newEmail = $_POST["new_email"];
         $newAddress = $_POST["new_address"];
         $idToUpdate = $_POST["student_id"];
-    
+
         // Construct the update query with multiple fields
         $sql = "UPDATE Student SET ";
         $updateFields = [];
-    
+
         if (!empty($newName)) {
             $updateFields[] = "name='$newName'";
         }
-    
+
         if (!empty($newEmail)) {
             $updateFields[] = "email='$newEmail'";
         }
-    
+
         if (!empty($newAddress)) {
             $updateFields[] = "address='$newAddress'";
         }
-    
+
         $sql .= implode(", ", $updateFields);
-    
+
         // Add the WHERE clause
         $sql .= " WHERE id=$idToUpdate";
-    
+
         performQuery($sql);
     }
 
@@ -54,6 +54,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $idToDelete = $_POST["student_id"];
         $sql = "DELETE FROM Student WHERE id=$idToDelete";
         performQuery($sql);
+
+        // Reset auto-increment counter
+        $resetAutoIncrementSql = "ALTER TABLE Student AUTO_INCREMENT = 1";
+        performQuery($resetAutoIncrementSql);
     }
 }
 ?>
@@ -98,7 +102,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         button {
-            background-color: #4caf50;
+            background-color: #1a6ebd;
             color: #fff;
             padding: 10px;
             border: none;
@@ -128,27 +132,27 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         th {
-            background-color: #4caf50;
+            background-color: #1a6ebd;
             color: #fff;
         }
     </style>
 </head>
 <body>
 
-    <!-- Create Student Form -->
+    <!-- Add Student Form -->
     <form method="POST" action="">
-        <h2>Create Student</h2>
+        <h2>Add Student</h2>
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" required>
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required>
         <label for="address">Address:</label>
         <input type="text" id="address" name="address">
-        <button type="submit" name="create_student">Create Student</button>
+        <button type="submit" name="add_student">Add Student</button>
     </form>
 
-    <!-- Read Students Table -->
-    <h2>Read Students</h2>
+    <!-- View Students Table -->
+    <h2>View Students</h2>
     <?php
     $sql = "SELECT id, name, email, address FROM Student";
     $students = fetchData($sql);
@@ -174,19 +178,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
     ?>
 
-   <!-- Update Student Form -->
-<form method="POST" action="">
-    <h2>Update Student</h2>
-    <label for="student_id">Student ID:</label>
-    <input type="text" id="student_id" name="student_id" required>
-    <label for="new_name">New Name:</label>
-    <input type="text" id="new_name" name="new_name">
-    <label for="new_email">New Email:</label>
-    <input type="email" id="new_email" name="new_email">
-    <label for="new_address">New Address:</label>
-    <input type="text" id="new_address" name="new_address">
-    <button type="submit" name="update_student">Update Student</button>
-</form>
+    <!-- Update Student Form -->
+    <form method="POST" action="">
+        <h2>Update Student</h2>
+        <label for="student_id">Student ID:</label>
+        <input type="text" id="student_id" name="student_id" required>
+        <label for="new_name">New Name:</label>
+        <input type="text" id="new_name" name="new_name">
+        <label for="new_email">New Email:</label>
+        <input type="email" id="new_email" name="new_email">
+        <label for="new_address">New Address:</label>
+        <input type="text" id="new_address" name="new_address">
+        <button type="submit" name="update_student">Update Student</button>
+    </form>
 
     <!-- Delete Student Form -->
     <form method="POST" action="">

@@ -15,9 +15,9 @@ if ($conn->connect_error) {
 // Create database
 $sql = "CREATE DATABASE IF NOT EXISTS Tamondong";
 if ($conn->query($sql) === TRUE) {
-    echo "Database created successfully\n";
+    echo "Database created successfully<br>";
 } else {
-    echo "Error creating database: " . $conn->error . "\n";
+    echo "Error creating database: " . $conn->error . "<br>";
 }
 
 // Switch to the created database
@@ -30,9 +30,9 @@ $sql = "CREATE TABLE IF NOT EXISTS Users (
     password VARCHAR(255) NOT NULL
 )";
 if ($conn->query($sql) === TRUE) {
-    echo "Table Users created successfully\n";
+    echo "Table Users created successfully<br>";
 } else {
-    echo "Error creating table Users: " . $conn->error . "\n";
+    echo "Error creating table Users: " . $conn->error . "<br>";
 }
 
 // Create Student table
@@ -43,9 +43,9 @@ $sql = "CREATE TABLE IF NOT EXISTS Student (
     address VARCHAR(255)
 )";
 if ($conn->query($sql) === TRUE) {
-    echo "Table Student created successfully\n";
+    echo "Table Student created successfully<br>";
 } else {
-    echo "Error creating table Student: " . $conn->error . "\n";
+    echo "Error creating table Student: " . $conn->error . "<br>";
 }
 
 // Create Course table
@@ -55,9 +55,9 @@ $sql = "CREATE TABLE IF NOT EXISTS Course (
     description TEXT
 )";
 if ($conn->query($sql) === TRUE) {
-    echo "Table Course created successfully\n";
+    echo "Table Course created successfully<br>";
 } else {
-    echo "Error creating table Course: " . $conn->error . "\n";
+    echo "Error creating table Course: " . $conn->error . "<br>";
 }
 
 // Create Instructor table
@@ -68,9 +68,9 @@ $sql = "CREATE TABLE IF NOT EXISTS Instructor (
     specialty VARCHAR(255)
 )";
 if ($conn->query($sql) === TRUE) {
-    echo "Table Instructor created successfully\n";
+    echo "Table Instructor created successfully<br>";
 } else {
-    echo "Error creating table Instructor: " . $conn->error . "\n";
+    echo "Error creating table Instructor: " . $conn->error . "<br>";
 }
 
 // Create Enrollment table
@@ -82,9 +82,9 @@ $sql = "CREATE TABLE IF NOT EXISTS Enrollment (
     FOREIGN KEY (course_id) REFERENCES Course(id)
 )";
 if ($conn->query($sql) === TRUE) {
-    echo "Table Enrollment created successfully\n";
+    echo "Table Enrollment created successfully<br>";
 } else {
-    echo "Error creating table Enrollment: " . $conn->error . "\n";
+    echo "Error creating table Enrollment: " . $conn->error . "<br>";
 }
 
 // Close connection
