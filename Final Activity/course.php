@@ -85,7 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         button {
-            background-color: #4caf50;
+            background-color: #1a6ebd;
             color: #fff;
             padding: 10px;
             border: none;
@@ -124,7 +124,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         th {
-            background-color: #4caf50;
+            background-color: #1a6ebd;
             color: #fff;
         }
     </style>

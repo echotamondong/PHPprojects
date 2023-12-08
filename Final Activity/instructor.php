@@ -2,42 +2,98 @@
 include_once 'db.php';
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // Create Instructor
-    if (isset($_POST["create_instructor"])) {
+    // Add Instructor
+    if (isset($_POST["add_instructor"])) {
         $name = $_POST["name"];
         $email = $_POST["email"];
         $specialty = $_POST["specialty"];
 
-        $sql = "INSERT INTO Instructor (name, email, specialty) VALUES ('$name', '$email', '$specialty')";
+        // Find the first available (unused) ID
+        $availableId = findAvailableId('Instructor');
+
+        $sql = "INSERT INTO Instructor (id, name, email, specialty) VALUES ('$availableId', '$name', '$email', '$specialty')";
         performQuery($sql);
     }
 
-    // Read Instructors
-    if (isset($_POST["read_instructors"])) {
+    // View Instructors
+    if (isset($_POST["view_instructors"])) {
         $sql = "SELECT id, name, email, specialty FROM Instructor";
         $instructors = fetchData($sql);
     }
 
     // Update Instructor
     if (isset($_POST["update_instructor"])) {
-        $idToUpdate = $_POST["instructor_id"];
         $newName = $_POST["new_name"];
         $newEmail = $_POST["new_email"];
         $newSpecialty = $_POST["new_specialty"];
+        $idToUpdate = $_POST["instructor_id"];
 
-        $sql = "UPDATE Instructor SET name='$newName', email='$newEmail', specialty='$newSpecialty' WHERE id=$idToUpdate";
+        // Construct the update query with multiple fields
+        $sql = "UPDATE Instructor SET ";
+        $updateFields = [];
+
+        if (!empty($newName)) {
+            $updateFields[] = "name='$newName'";
+        }
+
+        if (!empty($newEmail)) {
+            $updateFields[] = "email='$newEmail'";
+        }
+
+        if (!empty($newSpecialty)) {
+            $updateFields[] = "specialty='$newSpecialty'";
+        }
+
+        $sql .= implode(", ", $updateFields);
+
+        // Add the WHERE clause
+        $sql .= " WHERE id=$idToUpdate";
+
         performQuery($sql);
     }
 
     // Delete Instructor
-    if (isset($_POST["delete_instructor"]) && isset($_POST["instructor_id_delete"])) {
-        $idToDelete = $_POST["instructor_id_delete"];
+    if (isset($_POST["delete_instructor"])) {
+        $idToDelete = $_POST["instructor_id"];
         $sql = "DELETE FROM Instructor WHERE id=$idToDelete";
         performQuery($sql);
 
-        // Reset auto-increment value
-        $resetAutoIncrementSql = "ALTER TABLE Instructor AUTO_INCREMENT = 1";
-        performQuery($resetAutoIncrementSql);
+        // Fill gaps in IDs
+        fillIdGaps('Instructor');
+    }
+}
+
+// Function to find the first available (unused) ID
+function findAvailableId($tableName) {
+    $sql = "SELECT id FROM $tableName";
+    $existingIds = fetchData($sql);
+
+    $id = 1;
+    foreach ($existingIds as $existingId) {
+        if ($id != $existingId['id']) {
+            // Gap found, use this ID
+            return $id;
+        }
+        $id++;
+    }
+
+    // No gap found, use the next ID
+    return $id;
+}
+
+// Function to fill gaps in IDs caused by deletions
+function fillIdGaps($tableName) {
+    $sql = "SELECT id FROM $tableName ORDER BY id";
+    $existingIds = fetchData($sql);
+
+    $expectedId = 1;
+    foreach ($existingIds as $existingId) {
+        if ($existingId['id'] != $expectedId) {
+            // Gap found, update the ID
+            $updateSql = "UPDATE $tableName SET id=$expectedId WHERE id={$existingId['id']}";
+            performQuery($updateSql);
+        }
+        $expectedId++;
     }
 }
 ?>
@@ -123,7 +179,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         th {
-            background-color: #4caf50;
+            background-color: #1a6ebd;
             color: #fff;
         }
     </style>
@@ -139,18 +195,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <input type="email" name="email" required>
         <label for="specialty">Specialty:</label>
         <input type="text" name="specialty" required>
-        <button type="submit" name="create_instructor">Add Instructor</button>
+        <button type="submit" name="add_instructor">Add Instructor</button>
     </form>
 
     <!-- HTML form for reading instructors -->
     <form method="post">
         <h2>View Instructors</h2>
-        <button type="submit" name="read_instructors">View Instructors</button>
+        <button type="submit" name="view_instructors">View Instructors</button>
     </form>
 
     <!-- Display code for instructors -->
     <?php
-    if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["read_instructors"])) {
+    if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["view_instructors"])) {
         $sql = "SELECT id, name, email, specialty FROM Instructor";
         $instructors = fetchData($sql);
         if (!empty($instructors)) {
@@ -182,26 +238,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <label for="instructor_id">Instructor ID to Update:</label>
         <input type="text" name="instructor_id" required>
         <label for="new_name">New Name:</label>
-        <input type="text" name="new_name" required>
+        <input type="text" name="new_name">
         <label for="new_email">New Email:</label>
-        <input type="email" name="new_email" required>
+        <input type="email" name="new_email">
         <label for="new_specialty">New Specialty:</label>
-        <input type="text" name="new_specialty" required>
+        <input type="text" name="new_specialty">
         <button type="submit" name="update_instructor">Update Instructor</button>
     </form>
 
-
-
-    
     <!-- HTML form for deleting an instructor -->
     <form method="post">
         <h2>Delete Instructor</h2>
-        <label for="instructor_id_delete">Instructor ID to Delete:</label>
-        <input type="text" name="instructor_id_delete" required>
+        <label for="instructor_id">Instructor ID to Delete:</label>
+        <input type="text" name="instructor_id" required>
         <button type="submit" name="delete_instructor">Delete Instructor</button>
     </form>
 
-
 </body>
 </html>
-

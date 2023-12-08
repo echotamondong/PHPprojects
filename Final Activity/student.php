@@ -8,7 +8,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $email = $_POST["email"];
         $address = $_POST["address"];
 
-        $sql = "INSERT INTO Student (name, email, address) VALUES ('$name', '$email', '$address')";
+        // Find the first available (unused) ID
+        $availableId = findAvailableId();
+        
+        $sql = "INSERT INTO Student (id, name, email, address) VALUES ('$availableId', '$name', '$email', '$address')";
         performQuery($sql);
     }
 
@@ -54,13 +57,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $idToDelete = $_POST["student_id"];
         $sql = "DELETE FROM Student WHERE id=$idToDelete";
         performQuery($sql);
-
-        // Reset auto-increment counter
-        $resetAutoIncrementSql = "ALTER TABLE Student AUTO_INCREMENT = 1";
-        performQuery($resetAutoIncrementSql);
     }
 }
+
+// Function to find the first available (unused) ID
+function findAvailableId() {
+    $sql = "SELECT id FROM Student";
+    $existingIds = fetchData($sql);
+
+    $id = 1;
+    foreach ($existingIds as $existingId) {
+        if ($id != $existingId['id']) {
+            // Gap found, use this ID
+            return $id;
+        }
+        $id++;
+    }
+
+    // No gap found, use the next ID
+    return $id;
+}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
