@@ -17,24 +17,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $users = fetchData($sql);
     }
 
-// Update User
-if (isset($_POST["update_user"])) {
-    $newUsername = $_POST["new_username"];
-    $currentUsername = $_POST["current_username"];
-    $newPassword = password_hash($_POST["new_password"], PASSWORD_DEFAULT);
+    // Update User
+    if (isset($_POST["update_user"])) {
+        $newUsername = $_POST["new_username"];
+        $currentUsername = $_POST["current_username"];
+        $newPassword = password_hash($_POST["new_password"], PASSWORD_DEFAULT);
 
-    $sql = "UPDATE Users SET username='$newUsername', password='$newPassword' WHERE username='$currentUsername'";
-    performQuery($sql);
-}
-
+        $sql = "UPDATE Users SET username='$newUsername', password='$newPassword' WHERE username='$currentUsername'";
+        performQuery($sql);
+    }
 
     // Delete User
-if (isset($_POST["delete_user"])) {
-    $usernameToDelete = $_POST["username_delete"];
-    $sql = "DELETE FROM Users WHERE username='$usernameToDelete'";
-    performQuery($sql);
-}
-
+    if (isset($_POST["delete_user"])) {
+        $usernameToDelete = $_POST["username_delete"];
+        $sql = "DELETE FROM Users WHERE username='$usernameToDelete'";
+        performQuery($sql);
+    }
 }
 ?>
 
@@ -78,105 +76,95 @@ if (isset($_POST["delete_user"])) {
             box-sizing: border-box;
         }
 
-        button {
-            background-color: #1a6ebd;
-            color: #fff;
-            padding: 10px;
+        /* Updated button styles */
+        .pushable {
+            position: relative;
+            background: transparent;
+            padding: 0px;
             border: none;
-            border-radius: 4px;
             cursor: pointer;
+            outline-offset: 4px;
+            outline-color: deeppink;
+            transition: filter 250ms;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
         }
 
-        button:hover {
-            background-color: #45a049;
-        }
-
-        h2 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        li {
-            margin-bottom: 10px;
-        }
-
-        table {
+        .shadow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
             width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #1a6ebd;
-            color: #fff;
-        }
-    </style>
-</head>
-<body>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Management System</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-
-        form {
-            background-color: #fff;
-            padding: 20px;
+            background: hsl(226, 25%, 69%);
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
-            text-align: center;
-            margin-bottom: 20px;
+            filter: blur(2px);
+            will-change: transform;
+            transform: translateY(2px);
+            transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
         }
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        input {
+        .edge {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
             width: 100%;
-            padding: 8px;
-            margin-bottom: 12px;
-            box-sizing: border-box;
+            border-radius: 8px;
+            background: linear-gradient(
+                to right,
+                hsl(248, 39%, 39%) 0%,
+                hsl(248, 39%, 49%) 8%,
+                hsl(248, 39%, 39%) 92%,
+                hsl(248, 39%, 29%) 100%
+            );
         }
 
-        button {
-            background-color: #1a6ebd;
-            color: #fff;
-            padding: 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
+        .front {
+            display: block;
+            position: relative;
+            border-radius: 8px;
+            background: #1a6ebd;
+            padding: 16px 32px;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+            Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-size: 1rem;
+            transform: translateY(-4px);
+            transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
         }
 
-        button:hover {
-            background-color: #45a049;
+        .pushable:hover {
+            filter: brightness(110%);
         }
+
+        .pushable:hover .front {
+            transform: translateY(-6px);
+            transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
+        }
+
+        .pushable:active .front {
+            transform: translateY(-2px);
+            transition: transform 34ms;
+        }
+
+        .pushable:hover .shadow {
+            transform: translateY(4px);
+            transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
+        }
+
+        .pushable:active .shadow {
+            transform: translateY(1px);
+            transition: transform 34ms;
+        }
+
+        .pushable:focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        /* End updated button styles */
 
         h2 {
             color: #333;
@@ -219,13 +207,25 @@ if (isset($_POST["delete_user"])) {
         <input type="text" name="username" required>
         <label for="password">Password:</label>
         <input type="password" name="password" required>
-        <button type="submit" name="create_user">Create User</button>
+        <button class="pushable" type="submit" name="create_user">
+            <span class="shadow"></span>
+            <span class="edge"></span>
+            <span class="front">
+                Add 
+            </span>
+        </button>
     </form>
 
     <!-- HTML form for reading users -->
     <form method="post">
-        <h2>Read Users</h2>
-        <button type="submit" name="read_users">Read Users</button>
+        <h2>Users</h2>
+        <button class="pushable" type="submit" name="read_users">
+            <span class="shadow"></span>
+            <span class="edge"></span>
+            <span class="front">
+                View 
+            </span>
+        </button>
     </form>
 
     <!-- Display code for users -->
@@ -261,19 +261,28 @@ if (isset($_POST["delete_user"])) {
         <input type="text" name="current_username" required>
         <label for="new_password">New Password:</label>
         <input type="password" name="new_password" required>
-        <button type="submit" name="update_user">Update User</button>
+        <button class="pushable" type="submit" name="update_user">
+            <span class="shadow"></span>
+            <span class="edge"></span>
+            <span class="front">
+                Update 
+            </span>
+        </button>
     </form>
-
 
     <!-- HTML form for deleting a user -->
     <form method="post">
         <h2>Delete User</h2>
         <label for="username_delete">Username to Delete:</label>
         <input type="text" name="username_delete" required>
-        <button type="submit" name="delete_user">Delete User</button>
+        <button class="pushable" type="submit" name="delete_user">
+            <span class="shadow"></span>
+            <span class="edge"></span>
+            <span class="front">
+                Delete 
+            </span>
+        </button>
     </form>
-
 
 </body>
 </html>
-

@@ -139,18 +139,86 @@ function fillIdGaps($tableName) {
             box-sizing: border-box;
         }
 
-        button {
-            background-color: #1a6ebd;
-            color: #fff;
-            padding: 10px;
+        /* Updated button styles */
+        .pushable {
+            position: relative;
+            background: transparent;
+            padding: 0px;
             border: none;
-            border-radius: 4px;
             cursor: pointer;
+            outline-offset: 4px;
+            outline-color: deeppink;
+            transition: filter 250ms;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
         }
 
-        button:hover {
-            background-color: #45a049;
+        .shadow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background: hsl(226, 25%, 69%);
+            border-radius: 8px;
+            filter: blur(2px);
+            will-change: transform;
+            transform: translateY(2px);
+            transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
         }
+
+        .edge {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            border-radius: 8px;
+            background: linear-gradient(
+                to right,
+                hsl(248, 39%, 39%) 0%,
+                hsl(248, 39%, 49%) 8%,
+                hsl(248, 39%, 39%) 92%,
+                hsl(248, 39%, 29%) 100%
+            );
+        }
+
+        .front {
+            display: block;
+            position: relative;
+            border-radius: 8px;
+            background: #1a6ebd;
+            padding: 16px 32px;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+            Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-size: 1rem;
+            transform: translateY(-4px);
+            transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
+        }
+
+        .pushable:hover {
+            filter: brightness(110%);
+        }
+
+        .pushable:hover .front {
+            transform: translateY(-6px);
+            transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
+        }
+
+        .pushable:active .front {
+            transform: translateY(-2px);
+            transition: transform 34ms;
+        }
+
+        .pushable:hover .shadow {
+            transform: translateY(4px);
+            transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
+        }
+
+        /* End of updated button styles */
 
         h2 {
             color: #333;
@@ -195,13 +263,25 @@ function fillIdGaps($tableName) {
         <input type="email" name="email" required>
         <label for="specialty">Specialty:</label>
         <input type="text" name="specialty" required>
-        <button type="submit" name="add_instructor">Add Instructor</button>
+        <button class="pushable" type="submit" name="add_instructor">
+            <span class="shadow"></span>
+            <span class="edge"></span>
+            <span class="front">
+                Add
+            </span>
+        </button>
     </form>
 
     <!-- HTML form for reading instructors -->
     <form method="post">
-        <h2>View Instructors</h2>
-        <button type="submit" name="view_instructors">View Instructors</button>
+        <h2>Instructors</h2>
+        <button class="pushable" type="submit" name="view_instructors">
+            <span class="shadow"></span>
+            <span class="edge"></span>
+            <span class="front">
+                View 
+            </span>
+        </button>
     </form>
 
     <!-- Display code for instructors -->
@@ -243,7 +323,13 @@ function fillIdGaps($tableName) {
         <input type="email" name="new_email">
         <label for="new_specialty">New Specialty:</label>
         <input type="text" name="new_specialty">
-        <button type="submit" name="update_instructor">Update Instructor</button>
+        <button class="pushable" type="submit" name="update_instructor">
+            <span class="shadow"></span>
+            <span class="edge"></span>
+            <span class="front">
+                Update
+            </span>
+        </button>
     </form>
 
     <!-- HTML form for deleting an instructor -->
@@ -251,7 +337,13 @@ function fillIdGaps($tableName) {
         <h2>Delete Instructor</h2>
         <label for="instructor_id">Instructor ID to Delete:</label>
         <input type="text" name="instructor_id" required>
-        <button type="submit" name="delete_instructor">Delete Instructor</button>
+        <button class="pushable" type="submit" name="delete_instructor">
+            <span class="shadow"></span>
+            <span class="edge"></span>
+            <span class="front">
+                Delete
+            </span>
+        </button>
     </form>
 
 </body>

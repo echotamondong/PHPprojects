@@ -84,18 +84,85 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             box-sizing: border-box;
         }
 
-        button {
-            background-color: #1a6ebd;
-            color: #fff;
-            padding: 10px;
+        /* Updated button styles */
+        .pushable {
+            position: relative;
+            background: transparent;
+            padding: 0px;
             border: none;
-            border-radius: 4px;
             cursor: pointer;
+            outline-offset: 4px;
+            outline-color: deeppink;
+            transition: filter 250ms;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
         }
 
-        button:hover {
-            background-color: #45a049;
+        .shadow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background: hsl(226, 25%, 69%);
+            border-radius: 8px;
+            filter: blur(2px);
+            will-change: transform;
+            transform: translateY(2px);
+            transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
         }
+
+        .edge {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            border-radius: 8px;
+            background: linear-gradient(
+                to right,
+                hsl(248, 39%, 39%) 0%,
+                hsl(248, 39%, 49%) 8%,
+                hsl(248, 39%, 39%) 92%,
+                hsl(248, 39%, 29%) 100%
+            );
+        }
+
+        .front {
+            display: block;
+            position: relative;
+            border-radius: 8px;
+            background: #1a6ebd;
+            padding: 16px 32px;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+            Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-size: 1rem;
+            transform: translateY(-4px);
+            transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
+        }
+
+        .pushable:hover {
+            filter: brightness(110%);
+        }
+
+        .pushable:hover .front {
+            transform: translateY(-6px);
+            transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
+        }
+
+        .pushable:active .front {
+            transform: translateY(-2px);
+            transition: transform 34ms;
+        }
+
+        .pushable:focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        /* End updated button styles */
 
         h2 {
             color: #333;
@@ -138,16 +205,26 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <input type="text" name="name" required>
         <label for="description">Description:</label>
         <textarea name="description" required></textarea>
-        <button type="submit" name="create_course">Create Course</button>
+        <button class="pushable" type="submit" name="create_course">
+            <span class="shadow"></span>
+            <span class="edge"></span>
+            <span class="front">
+                Create Course
+            </span>
+        </button>
     </form>
 
     <!-- HTML form for reading courses -->
     <form method="post">
         <h2>Read Courses</h2>
-        <button type="submit" name="read_courses">Read Courses</button>
+        <button class="pushable" type="submit" name="read_courses">
+            <span class="shadow"></span>
+            <span class="edge"></span>
+            <span class="front">
+                View
+            </span>
+        </button>
     </form>
-
-    <!-- Display code for courses -->
     <?php
     if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["read_courses"])) {
         $sql = "SELECT id, name, description FROM Course";
@@ -182,18 +259,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <textarea name="new_description" required></textarea>
         <label for="course_id">Course ID to Update:</label>
         <input type="text" name="course_id" required>
-        <button type="submit" name="update_course">Update Course</button>
+        <button class="pushable" type="submit" name="update_course">
+            <span class="shadow"></span>
+            <span class="edge"></span>
+            <span class="front">
+                Update
+            </span>
+        </button>
     </form>
-
 
     <!-- HTML form for deleting a course -->
     <form method="post">
         <h2>Delete Course</h2>
         <label for="course_id_delete">Course ID to Delete:</label>
         <input type="text" name="course_id_delete" required>
-        <button type="submit" name="delete_course">Delete Course</button>
+        <button class="pushable" type="submit" name="delete_course">
+            <span class="shadow"></span>
+            <span class="edge"></span>
+            <span class="front">
+                Delete
+            </span>
+        </button>
     </form>
-
 
 </body>
 </html>
