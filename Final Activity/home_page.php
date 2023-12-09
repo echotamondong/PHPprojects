@@ -36,9 +36,9 @@
         }
 
         .card {
-            width: 90%; /* Adjusted to be almost as long as the container */
-            max-width: 400px; /* Added max-width to limit width on larger screens */
-            height: 1.5em; /* Set a fixed height */
+            width: 90%; 
+            max-width: 400px; 
+            height: 1.5em;
             perspective: 1000px;
             position: absolute;
             top: 50%;
@@ -142,7 +142,7 @@
             <option value="instructor">Manage Instructors</option>
             
         </select>
-        
+
         <button onclick="redirectToSelectedMethod()">Go</button>
     </div>
 
