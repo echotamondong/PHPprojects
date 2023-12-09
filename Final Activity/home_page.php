@@ -32,7 +32,7 @@
 
         .card-container {
             position: relative;
-            margin-bottom: 20px;
+            margin-bottom: 40px;
         }
 
         .card {
@@ -93,7 +93,7 @@
         select {
             padding: 8px;
             font-size: 16px;
-            margin-top: 30px; /* Added more space before the dropdown */
+            margin-top: 30px; 
         }
 
         button {
@@ -111,6 +111,10 @@
         button:hover {
             background-color: #0e3a5e;
         }
+
+        .label {
+        margin-top: 300px; 
+    }
     </style>
 </head>
 <body>
@@ -132,10 +136,13 @@
 
         <label for="method">Choose a method:</label>
         <select id="method">
+            <option value="user">Manage Users</option>
             <option value="course">Manage Courses</option>
             <option value="student">Manage Students</option>
             <option value="instructor">Manage Instructors</option>
+            
         </select>
+        
         <button onclick="redirectToSelectedMethod()">Go</button>
     </div>
 
@@ -148,6 +155,8 @@
                 window.location.href = 'student.php';
             } else if (selectedMethod === 'instructor') {
                 window.location.href = 'instructor.php';
+            } else if (selectedMethod === 'user') {
+                window.location.href = 'users.php';
             }
         }
     </script>

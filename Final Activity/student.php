@@ -253,7 +253,7 @@ $students = fetchData($sql);
                             <th>Name</th>
                             <th>Email</th>
                             <th>Address</th>
-                            <th>Action</th>
+                            <th>Actions</th>
                         </tr>";
                 foreach ($students as $student) {
                     echo "<tr>
@@ -276,6 +276,17 @@ $students = fetchData($sql);
             }
             ?>
         </div>
+
+                  <!-- Button to go back to the home page -->
+                  <form method="GET" action="home_page.php">
+                    <button class="pushable" type="navigate" name="home_page">
+                        <span class="shadow"></span>
+                        <span class="edge"></span>
+                        <span class="front">
+                            Go Back to Home 
+                        </span>
+                    </button>
+                </form>
     </div>
 
     <script>

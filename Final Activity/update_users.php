@@ -1,45 +1,31 @@
 <?php
 include_once 'db.php';
 
-// Fetch instructor information based on the provided instructor_id
-if ($_SERVER["REQUEST_METHOD"] === "GET") {
-    if (isset($_GET["instructor_id"])) {
-        $instructorId = $_GET["instructor_id"];
-        $sql = "SELECT id, name, email, specialty FROM Instructor WHERE id = $instructorId";
-        $instructor = fetchData($sql);
+// Fetch user data for update
+if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["username"])) {
+    $usernameToUpdate = $_GET["username"];
+    $sql = "SELECT username, password FROM Users WHERE username='$usernameToUpdate'";
+    $userData = fetchData($sql);
+
+    // Redirect if no user found
+    if (empty($userData)) {
+        header("Location: users.php");
+        exit();
     }
 }
 
-// Handle form submission for updating instructor information
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    if (isset($_POST["update_instructor"])) {
-        $idToUpdate = $_POST["instructor_id"];
-        $newName = $_POST["new_name"];
-        $newEmail = $_POST["new_email"];
-        $newSpecialty = $_POST["new_specialty"];
+// Update User
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["update_user"])) {
+    $newUsername = $_POST["new_username"];
+    $currentUsername = $_POST["current_username"];
+    $newPassword = password_hash($_POST["new_password"], PASSWORD_DEFAULT);
 
-        $updateFields = [];
-        if (!empty($newName)) {
-            $updateFields[] = "name='$newName'";
-        }
+    $sql = "UPDATE Users SET username='$newUsername', password='$newPassword' WHERE username='$currentUsername'";
+    performQuery($sql);
 
-        if (!empty($newEmail)) {
-            $updateFields[] = "email='$newEmail'";
-        }
-
-        if (!empty($newSpecialty)) {
-            $updateFields[] = "specialty='$newSpecialty'";
-        }
-
-        if (!empty($updateFields)) {
-            $updateQuery = "UPDATE Instructor SET " . implode(", ", $updateFields) . " WHERE id=$idToUpdate";
-            performQuery($updateQuery);
-
-        // Redirect to the instructors page after updating
-        header("Location: instructor.php");
-        exit();
-        }
-    }
+    // Redirect after update
+    header("Location: users.php");
+    exit();
 }
 ?>
 
@@ -48,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Instructor Information</title>
+    <title>Update User</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -61,13 +47,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             height: 100vh;
         }
 
-        .container {
+        form {
             background-color: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 300px;
             text-align: center;
+            margin-bottom: 20px;
         }
 
         label {
@@ -155,16 +142,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             transition: transform 34ms;
         }
 
-        .pushable:hover .shadow {
-            transform: translateY(4px);
-            transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
-        }
-
-        .pushable:active .shadow {
-            transform: translateY(1px);
-            transition: transform 34ms;
-        }
-
         .pushable:focus:not(:focus-visible) {
             outline: none;
         }
@@ -176,34 +153,24 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Update Instructor Information</h2>
-        <?php
-        if (isset($instructor) && !empty($instructor)) {
-            foreach ($instructor as $instructorData) {
-        ?>
-            <form method="POST" action="">
-                <input type="hidden" name="instructor_id" value="<?php echo $instructorData['id']; ?>">
-                <label for="new_name">New Name:</label>
-                <input type="text" id="new_name" name="new_name" value="<?php echo $instructorData['name']; ?>" required>
-                <label for="new_email">New Email:</label>
-                <input type="email" id="new_email" name="new_email" value="<?php echo $instructorData['email']; ?>" required>
-                <label for="new_specialty">New Specialty:</label>
-                <input type="text" id="new_specialty" name="new_specialty" value="<?php echo $instructorData['specialty']; ?>" required>
-                <button class="pushable" type="submit" name="update_instructor">
-                    <span class="shadow"></span>
-                    <span class="edge"></span>
-                    <span class="front">
-                        Update
-                    </span>
-                </button>
-            </form>
-        <?php
-            }
-        } else {
-            echo "<p>No instructor found.</p>";
-        }
-        ?>
-    </div>
+
+    <!-- HTML form for updating a user -->
+    <form method="post">
+        <h2>Update User</h2>
+        <label for="current_username">Current Username:</label>
+        <input type="text" name="current_username" required value="<?php echo $userData[0]['username']; ?>">
+        <label for="new_username">New Username:</label>
+        <input type="text" name="new_username" required>
+        <label for="new_password">New Password:</label>
+        <input type="password" name="new_password" required>
+        <button class="pushable" type="submit" name="update_user">
+            <span class="shadow"></span>
+            <span class="edge"></span>
+            <span class="front">
+                Update 
+            </span>
+        </button>
+    </form>
+
 </body>
 </html>

@@ -11,22 +11,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         performQuery($sql);
     }
 
-    // Read Users
-    if (isset($_POST["read_users"])) {
-        $sql = "SELECT id, username FROM Users";
-        $users = fetchData($sql);
-    }
-
-    // Update User
-    if (isset($_POST["update_user"])) {
-        $newUsername = $_POST["new_username"];
-        $currentUsername = $_POST["current_username"];
-        $newPassword = password_hash($_POST["new_password"], PASSWORD_DEFAULT);
-
-        $sql = "UPDATE Users SET username='$newUsername', password='$newPassword' WHERE username='$currentUsername'";
-        performQuery($sql);
-    }
-
     // Delete User
     if (isset($_POST["delete_user"])) {
         $usernameToDelete = $_POST["username_delete"];
@@ -34,6 +18,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         performQuery($sql);
     }
 }
+
+// Read Users
+$sql = "SELECT username, password FROM Users";
+$users = fetchData($sql);
 ?>
 
 <!DOCTYPE html>
@@ -51,18 +39,26 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-direction: column;
             height: 100vh;
         }
 
-        form {
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .form-container {
             background-color: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
+            width: 600px;
             text-align: center;
             margin-bottom: 20px;
         }
+
 
         label {
             display: block;
@@ -76,7 +72,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             box-sizing: border-box;
         }
 
-        /* Updated button styles */
         .pushable {
             position: relative;
             background: transparent;
@@ -89,20 +84,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
         }
 
-        .shadow {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 100%;
-            background: hsl(226, 25%, 69%);
-            border-radius: 8px;
-            filter: blur(2px);
-            will-change: transform;
-            transform: translateY(2px);
-            transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
-        }
-
+        .shadow,
         .edge {
             position: absolute;
             top: 0;
@@ -110,6 +92,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             height: 100%;
             width: 100%;
             border-radius: 8px;
+        }
+
+        .shadow {
+            background: hsl(226, 25%, 69%);
+            filter: blur(2px);
+            will-change: transform;
+            transform: translateY(2px);
+            transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
+        }
+
+        .edge {
             background: linear-gradient(
                 to right,
                 hsl(248, 39%, 39%) 0%,
@@ -136,10 +129,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
         }
 
-        .pushable:hover {
-            filter: brightness(110%);
-        }
-
         .pushable:hover .front {
             transform: translateY(-6px);
             transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
@@ -150,34 +139,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             transition: transform 34ms;
         }
 
-        .pushable:hover .shadow {
-            transform: translateY(4px);
-            transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
-        }
-
-        .pushable:active .shadow {
-            transform: translateY(1px);
-            transition: transform 34ms;
-        }
-
         .pushable:focus:not(:focus-visible) {
             outline: none;
         }
 
-        /* End updated button styles */
-
         h2 {
             color: #333;
             margin-bottom: 20px;
-        }
-
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        li {
-            margin-bottom: 10px;
         }
 
         table {
@@ -196,93 +164,107 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             background-color: #1a6ebd;
             color: #fff;
         }
+
+
+        .update-button,
+        .delete-button {
+            cursor: pointer;
+            padding: 8px 12px;
+            background-color: #1a6ebd;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            margin-right: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .update-button:hover,
+        .delete-button:hover {
+            background-color: #15598a;
+        }
+
+        .password-cell {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
     </style>
 </head>
 <body>
 
-    <!-- HTML form for creating a user -->
-    <form method="post">
-        <h2>Create User</h2>
-        <label for="username">Username:</label>
-        <input type="text" name="username" required>
-        <label for="password">Password:</label>
-        <input type="password" name="password" required>
-        <button class="pushable" type="submit" name="create_user">
-            <span class="shadow"></span>
-            <span class="edge"></span>
-            <span class="front">
-                Add 
-            </span>
-        </button>
-    </form>
+    <div class="container">
+        <!-- HTML form for creating a user -->
+        <div class="form-container">
+            <form method="POST" action="">
+                <h2>Create User</h2>
+                <label for="username">Username:</label>
+                <input type="text" name="username" required>
+                <label for="password">Password:</label>
+                <input type="password" name="password" required>
+                <button class="pushable" type="submit" name="create_user">
+                    <span class="shadow"></span>
+                    <span class="edge"></span>
+                    <span class="front">
+                        Add 
+                    </span>
+                </button>
+            </form>
+        </div>
 
-    <!-- HTML form for reading users -->
-    <form method="post">
-        <h2>Users</h2>
-        <button class="pushable" type="submit" name="read_users">
-            <span class="shadow"></span>
-            <span class="edge"></span>
-            <span class="front">
-                View 
-            </span>
-        </button>
-    </form>
-
-    <!-- Display code for users -->
-    <?php
-    if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["read_users"])) {
-        $sql = "SELECT username, password FROM Users";
-        $users = fetchData($sql);
-        if (!empty($users)) {
-            echo "<table>
-                    <tr>
-                        <th>Username</th>
-                        <th>Password</th>
-                    </tr>";
-            foreach ($users as $user) {
-                echo "<tr>
-                        <td>{$user['username']}</td>
-                        <td>{$user['password']}</td>
-                    </tr>";
+        <!-- Display code for users -->
+        <div class="form-container">
+            <h2>Users</h2>
+            <?php
+            if (!empty($users)) {
+                echo "<table>
+                        <tr>
+                            <th>Username</th>
+                            <th>Password</th>
+                            <th>Actions</th>
+                        </tr>";
+                foreach ($users as $user) {
+                    echo "<tr>
+                            <td>{$user['username']}</td>
+                            <td>
+                                <div class='password-cell'>{$user['password']}</div>
+                            </td>
+                            <td>
+                                <button class='update-button' onclick=\"location.href='update_users.php?username={$user['username']}'\">Update</button>
+                                <form style='display: inline;' method='POST' action=''>
+                                    <input type='hidden' name='username_delete' value='{$user['username']}'>
+                                    <button class='delete-button' type='submit' name='delete_user'>Delete</button>
+                                </form>
+                            </td>
+                        </tr>";
+                }
+                echo "</table>";
+            } else {
+                echo "<p>No users found.</p>";
             }
-            echo "</table>";
-        } else {
-            echo "<p>No users found.</p>";
+            ?>
+
+
+        </div>
+                <!-- Button to go back to the home page -->
+                <form method="GET" action="home_page.php">
+                    <button class="pushable" type="navigate" name="home_page">
+                        <span class="shadow"></span>
+                        <span class="edge"></span>
+                        <span class="front">
+                            Go Back to Home 
+                        </span>
+                    </button>
+                </form>
+    </div>        
+    <script>
+        function confirmDelete(username) {
+            if (confirm('Are you sure you want to delete this user?')) {
+                location.href = 'users.php?delete_user=1&username_delete=' + username;
+            }
         }
-    }
-    ?>
-
-    <!-- HTML form for updating a user -->
-    <form method="post">
-        <h2>Update User</h2>
-        <label for="new_username">New Username:</label>
-        <input type="text" name="new_username" required>
-        <label for="current_username">Current Username:</label>
-        <input type="text" name="current_username" required>
-        <label for="new_password">New Password:</label>
-        <input type="password" name="new_password" required>
-        <button class="pushable" type="submit" name="update_user">
-            <span class="shadow"></span>
-            <span class="edge"></span>
-            <span class="front">
-                Update 
-            </span>
-        </button>
-    </form>
-
-    <!-- HTML form for deleting a user -->
-    <form method="post">
-        <h2>Delete User</h2>
-        <label for="username_delete">Username to Delete:</label>
-        <input type="text" name="username_delete" required>
-        <button class="pushable" type="submit" name="delete_user">
-            <span class="shadow"></span>
-            <span class="edge"></span>
-            <span class="front">
-                Delete 
-            </span>
-        </button>
-    </form>
+    </script>
 
 </body>
 </html>
