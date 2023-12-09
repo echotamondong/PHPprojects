@@ -10,45 +10,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         // Find the first available (unused) ID
         $availableId = findAvailableId();
-        
+
         $sql = "INSERT INTO Student (id, name, email, address) VALUES ('$availableId', '$name', '$email', '$address')";
-        performQuery($sql);
-    }
-
-    // View Students
-    if (isset($_POST["view_students"]) || isset($_POST["view_students_button"])) {
-        $sql = "SELECT id, name, email, address FROM Student";
-        $students = fetchData($sql);
-    }
-
-    // Update Student
-    if (isset($_POST["update_student"])) {
-        $newName = $_POST["new_name"];
-        $newEmail = $_POST["new_email"];
-        $newAddress = $_POST["new_address"];
-        $idToUpdate = $_POST["student_id"];
-
-        // Construct the update query with multiple fields
-        $sql = "UPDATE Student SET ";
-        $updateFields = [];
-
-        if (!empty($newName)) {
-            $updateFields[] = "name='$newName'";
-        }
-
-        if (!empty($newEmail)) {
-            $updateFields[] = "email='$newEmail'";
-        }
-
-        if (!empty($newAddress)) {
-            $updateFields[] = "address='$newAddress'";
-        }
-
-        $sql .= implode(", ", $updateFields);
-
-        // Add the WHERE clause
-        $sql .= " WHERE id=$idToUpdate";
-
         performQuery($sql);
     }
 
@@ -77,15 +40,18 @@ function findAvailableId() {
     // No gap found, use the next ID
     return $id;
 }
-?>
 
+// Fetch and display the table
+$sql = "SELECT id, name, email, address FROM Student";
+$students = fetchData($sql);
+?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Information System</title>
+    <title>Students View</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -98,13 +64,20 @@ function findAvailableId() {
             height: 100vh;
         }
 
-        form {
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .form-container {
             background-color: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
+            width: 600px;
             text-align: center;
+            margin-bottom: 20px;
         }
 
         label {
@@ -119,7 +92,6 @@ function findAvailableId() {
             box-sizing: border-box;
         }
 
-        /* Updated button styles */
         .pushable {
             position: relative;
             background: transparent;
@@ -207,8 +179,6 @@ function findAvailableId() {
             outline: none;
         }
 
-        /* End updated button styles */
-
         h2 {
             color: #333;
             margin-bottom: 20px;
@@ -230,99 +200,88 @@ function findAvailableId() {
             background-color: #1a6ebd;
             color: #fff;
         }
+
+        .update-btn,
+        .delete-btn {
+            cursor: pointer;
+            padding: 8px 12px;
+            background-color: #1a6ebd;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            margin-right: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .update-btn:hover,
+        .delete-btn:hover {
+            background-color: #15598a;
+        }
     </style>
 </head>
 <body>
+    <div class="container">
+        <!-- Add Student Form -->
+        <div class="form-container">
+            <h2>Add Student</h2>
+            <form method="POST" action="">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <label for="address">Address:</label>
+                <input type="text" id="address" name="address">
+                <button class="pushable" type="submit" name="add_student">
+                    <span class="shadow"></span>
+                    <span class="edge"></span>
+                    <span class="front">
+                        Add
+                    </span>
+                </button>
+            </form>
+        </div>
 
-    <!-- Add Student Form -->
-    <form method="POST" action="">
-        <h2>Add Student</h2>
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required>
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
-        <label for="address">Address:</label>
-        <input type="text" id="address" name="address">
-        <button class="pushable" type="submit" name="add_student">
-            <span class="shadow"></span>
-            <span class="edge"></span>
-            <span class="front">
-                Add 
-            </span>
-        </button>
-    </form>
-
-    <!-- View Students Table -->
-    <form method="POST" action="">
-        <h2>Students</h2>
-        <button class="pushable" type="submit" name="view_students_button">
-            <span class="shadow"></span>
-            <span class="edge"></span>
-            <span class="front">
-                View
-            </span>
-        </button>
-    </form>
-    <?php
-    if ($_SERVER["REQUEST_METHOD"] === "POST" && (isset($_POST["view_students"]) || isset($_POST["view_students_button"]))) {
-        $sql = "SELECT id, name, email, address FROM Student";
-        $students = fetchData($sql);
-        if (!empty($students)) {
-            echo "<table>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Address</th>
-                    </tr>";
-            foreach ($students as $student) {
-                echo "<tr>
-                        <td>{$student['id']}</td>
-                        <td>{$student['name']}</td>
-                        <td>{$student['email']}</td>
-                        <td>{$student['address']}</td>
-                    </tr>";
+        <!-- View Students Table -->
+        <div class="form-container">
+            <h2>Students</h2>
+            <!-- Display the table -->
+            <?php
+            if (!empty($students)) {
+                echo "<table>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Address</th>
+                            <th>Action</th>
+                        </tr>";
+                foreach ($students as $student) {
+                    echo "<tr>
+                            <td>{$student['id']}</td>
+                            <td>{$student['name']}</td>
+                            <td>{$student['email']}</td>
+                            <td>{$student['address']}</td>
+                            <td>
+                                <button class='update-btn' onclick='updateStudent({$student['id']})'>Update</button>
+                                <form style='display: inline;' method='POST' action=''>
+                                    <input type='hidden' name='student_id' value='{$student['id']}'>
+                                    <button class='delete-btn' type='submit' name='delete_student'>Delete</button>
+                                </form>
+                            </td>
+                        </tr>";
+                }
+                echo "</table>";
+            } else {
+                echo "<p>No students found.</p>";
             }
-            echo "</table>";
-        } else {
-            echo "<p>No students found.</p>";
+            ?>
+        </div>
+    </div>
+
+    <script>
+        function updateStudent(studentId) {
+            window.location.href = "update_student.php?student_id=" + studentId;
         }
-    }
-    ?>
-
-    <!-- Update Student Form -->
-    <form method="POST" action="">
-        <h2>Update Student</h2>
-        <label for="student_id">Student ID:</label>
-        <input type="text" id="student_id" name="student_id" required>
-        <label for="new_name">New Name:</label>
-        <input type="text" id="new_name" name="new_name">
-        <label for="new_email">New Email:</label>
-        <input type="email" id="new_email" name="new_email">
-        <label for="new_address">New Address:</label>
-        <input type="text" id="new_address" name="new_address">
-        <button class="pushable" type="submit" name="update_student">
-            <span class="shadow"></span>
-            <span class="edge"></span>
-            <span class="front">
-                Update 
-            </span>
-        </button>
-    </form>
-
-    <!-- Delete Student Form -->
-    <form method="POST" action="">
-        <h2>Delete Student</h2>
-        <label for="student_id">Student ID:</label>
-        <input type="text" id="student_id" name="student_id" required>
-        <button class="pushable" type="submit" name="delete_student">
-            <span class="shadow"></span>
-            <span class="edge"></span>
-            <span class="front">
-                Delete
-            </span>
-        </button>
-    </form>
-
+    </script>
 </body>
 </html>
